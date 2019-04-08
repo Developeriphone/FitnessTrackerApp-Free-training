@@ -1,0 +1,23 @@
+import UIKit
+class TabBarController: UITabBarController, UITabBarControllerDelegate {
+    var isPopToWorkoutListRootEnabled = true
+	func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+		var res = true
+		if self.selectedIndex == 0, let cur = self.viewControllers?[self.selectedIndex], cur == viewController {
+			res = isPopToWorkoutListRootEnabled
+		}
+		if res && self.selectedIndex == 1 {
+			appDelegate.currentWorkout?.exitWorkoutTrackingIfAppropriate()
+		}
+		return res
+	}
+	func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+		if self.selectedIndex == 2 {
+			appDelegate.completedWorkouts?.refresh(self)
+		}
+	}
+	func loadNeededControllers() {
+		viewControllers?[1].loadViewIfNeeded()
+		(viewControllers?[1] as? UINavigationController)?.viewControllers[0].loadViewIfNeeded()
+	}
+}
